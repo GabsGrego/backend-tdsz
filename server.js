@@ -49,6 +49,22 @@ app.get('/tarefas/:id', (req, res) => {
     });
 });
 
+//rota para atualizar tarefa existente
+app.put('/tarefas/:id', (req, res) => {
+    const { id } = req.params;
+    const { tarefa } = req.body;
+    db.run("UPDATE tarefas SET tarefa = ? WHERE id = ?", [tarefa, id], function(err) {
+        if (err) {
+            return res.status(500).json({error: err.message});
+        }
+        if (this.changes) {
+            res.status(200).json({message: 'Tarefa atualizada com sucesso!!'});
+        } else {
+            res.status(404).json({message: "Esta tarefa não foi encontrada!"});
+        }
+    });
+});
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
