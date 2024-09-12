@@ -6,7 +6,7 @@ app.use(express.json());
 
 //cria um banco de dados SQLite em memoria
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database(':memory:');
+const db = new sqlite3.Database('lista-tarefa.db');
 
 //cria a tabela 'tarefas' no bando de dados
 db.serialize(() => {
@@ -21,6 +21,16 @@ app.post('/tarefas', (req, res) => {
             return res.status(500).json({ error: err.message });
         }
         res.status(201).json({ id: this.lastID, tarefa });
+    });
+});
+
+//rota para listar todas as tarefas
+app.get('/tarefas', (req, res) => {
+    db.all("SELECT * FROM tarefas", [], (err, rows) => {
+        if (err) {
+            return res.status(500).json({error: err.message});
+        }
+        res.status(200).json(rows);
     });
 });
 
