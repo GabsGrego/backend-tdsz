@@ -36,6 +36,11 @@ exports.getTarefaById = (req, res) => {
 exports.updateTarefa = (req, res) => {
     const { id } = req.params;
     const { tarefa } = req.body;
+
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ error: 'Acesso negado. Apenas administradores podem atualizar ou deletar tarefas.' });
+    } 
+
     db.run("UPDATE tarefas SET tarefa = ? WHERE id = ?", [tarefa, id], function(err) {
         if (err) {
             return res.status(500).json({ error: err.message });
@@ -50,6 +55,11 @@ exports.updateTarefa = (req, res) => {
 
 exports.deleteTarefa = (req, res) => {
     const { id } = req.params;
+
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ error: 'Acesso negado. Apenas administradores podem atualizar ou deletar tarefas.' });
+    }
+
     db.run("DELETE FROM tarefas WHERE id = ?", [id], function(err) {
         if (err) {
             return res.status(500).json({ error: err.message });
